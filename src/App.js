@@ -223,8 +223,8 @@ function ConstructionFields({ form, set }) {
       <RadioGroup label="Type of Construction Project" required
         options={["Civil Construction", "Industrial Project", "Infrastructure", "Renovation / Upgrade", "Site Inspection"]}
         value={form.constructionType || ""} onChange={v => set("constructionType", v)} />
-      <TextInput label="Project Location" required placeholder="City, State, Country" value={form.projectLocation || ""} onChange={e => set("projectLocation", e.target.value)} />
-      <TextareaInput label="Estimated Project Size / Scope" required placeholder="Describe the size, area (sq meters), or scope of work…" value={form.projectScope || ""} onChange={e => set("projectScope", e.target.value)} rows={3} />
+      <TextInput label="Project Location" placeholder="City, State, Country" value={form.projectLocation || ""} onChange={e => set("projectLocation", e.target.value)} />
+      <TextareaInput label="Estimated Project Size / Scope" placeholder="Describe the size, area (sq meters), or scope of work…" value={form.projectScope || ""} onChange={e => set("projectScope", e.target.value)} rows={3} />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
         <TextInput label="Expected Start Date" type="date" value={form.startDate || ""} onChange={e => set("startDate", e.target.value)} />
         <SelectInput label="Expected Completion Timeline" value={form.timeline || ""} onChange={e => set("timeline", e.target.value)}
@@ -398,7 +398,7 @@ function SmartForm({ mode, onClose }) {
                 <Divider title="Existing Client Details" />
                 <TextInput label="Client ID" hint="Optional — found on your previous invoice or contract" placeholder="e.g. HT-2024-001" value={form.clientId || ""} onChange={setE("clientId")} />
                 <TextInput label="Previous Project / Service Reference" placeholder="e.g. Office Cleaning Contract Q1 2024" value={form.prevRef || ""} onChange={setE("prevRef")} />
-                <TextInput label="Account Manager (if known)" placeholder="Name of your account manager" value={form.accountManager || ""} onChange={setE("accountManager")} />
+                <TextInput label="Business Manager (if known)" placeholder="Name of your business manager" value={form.accountManager || ""} onChange={setE("accountManager")} />
               </>
             )}
           </>
