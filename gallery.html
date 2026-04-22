@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gallery | Honeytreat Trade Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ═══════════════════════════════════════
+       GALLERY GRID
+    ═══════════════════════════════════════ */
+    .gallery-masonry {
+      columns: 3;
+      column-gap: 1rem;
+    }
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .gallery-item img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(26,74,46,0.85) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      display: flex; align-items: flex-end;
+      padding: 1.25rem;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-overlay span {
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    /* hidden class for filter */
+    .gallery-item.hide {
+      display: none;
+    }
+
+    /* ═══════════════════════════════════════
+       LIGHTBOX
+    ═══════════════════════════════════════ */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(10,14,20,0.95);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-inner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 88vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 84vh;
+      border-radius: 16px;
+      object-fit: contain;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .lightbox.open .lightbox-img { transform: scale(1); }
+    .lightbox-caption {
+      position: absolute;
+      bottom: -40px; left: 0; right: 0;
+      text-align: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -48px; right: 0;
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      color: white; font-size: 1.2rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      width: 48px; height: 48px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      color: white; font-size: 1.3rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+      backdrop-filter: blur(6px);
+    }
+    .lightbox-arrow:hover { background: rgba(255,255,255,0.25); }
+    .lightbox-prev { left: -68px; }
+    .lightbox-prev:hover { transform: translateY(-50%) translateX(-3px); }
+    .lightbox-next { right: -68px; }
+    .lightbox-next:hover { transform: translateY(-50%) translateX(3px); }
+
+    /* ═══════════════════════════════════════
+       CAROUSEL
+    ═══════════════════════════════════════ */
+    .carousel-section {
+      background: var(--text-dark);
+      padding: 80px 0;
+      overflow: hidden;
+    }
+    .carousel-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .carousel-header h2 { color: white; margin-bottom: 0.5rem; }
+    .carousel-header p { color: rgba(255,255,255,0.55); font-size: 0.95rem; }
+    .carousel-header .section-tag {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.8);
+    }
+
+    .carousel-viewport {
+      position: relative;
+      overflow: hidden;
+      padding: 0 1.5rem;
+    }
+    .carousel-track {
+      display: flex;
+      gap: 1.25rem;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+      will-change: transform;
+    }
+    .carousel-slide {
+      flex: 0 0 calc(33.333% - 0.84rem);
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .carousel-slide img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .carousel-slide:hover img { transform: scale(1.06); }
+    .carousel-slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+      display: flex; align-items: flex-end;
+      padding: 1.25rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .carousel-slide:hover .carousel-slide-overlay { opacity: 1; }
+    .carousel-slide-overlay span {
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Carousel controls */
+    .carousel-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+    .carousel-btn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: white; font-size: 1.1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(6px);
+    }
+    .carousel-btn:hover:not(:disabled) {
+      background: var(--green-main);
+      border-color: var(--green-main);
+      transform: scale(1.08);
+    }
+    .carousel-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .carousel-dots {
+      display: flex; gap: 0.5rem; align-items: center;
+    }
+    .carousel-dot {
+      width: 8px; height: 8px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .carousel-dot.active {
+      background: var(--green-light);
+      width: 24px;
+    }
+
+    /* Drag hint line */
+    .carousel-hint {
+      text-align: center;
+      margin-top: 1rem;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .gallery-masonry { columns: 2; }
+      .carousel-slide { flex: 0 0 calc(50% - 0.625rem); }
+      .lightbox-prev { left: -12px; }
+      .lightbox-next { right: -12px; }
+    }
+    @media (max-width: 580px) {
+      .gallery-masonry { columns: 1; }
+      .carousel-slide { flex: 0 0 85%; }
+    }
+  </style>
+</head>
+<body class="page-gallery">
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="hta-logo.png" alt="Honeytreat Trade Academy" class="nav-logo-img" width="70px">
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link">About Us</a></li>
+      <li><a href="courses.html" class="nav-link">Courses</a></li>
+      <li><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+      <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
+      <li><a href="blog.html" class="nav-link">Blog</a></li>
+      <li><a href="connect.html" class="nav-link nav-cta">Connect</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="section-tag">HTA Gallery</div>
+    <h1>Moments That Define Excellence</h1>
+    <p>Explore the stories of growth, innovation, and success captured through our journey.</p>
+  </div>
+</section>
+
+<!-- ── MASONRY GALLERY ── -->
+<section class="section">
+  <div class="container">
+    <div class="gallery-filters reveal">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="training">Training Sessions</button>
+      <button class="filter-btn" data-filter="graduation">Graduation Ceremonies</button>
+      <button class="filter-btn" data-filter="partnerships">Partnerships & Events</button>
+      <button class="filter-btn" data-filter="fieldwork">Field & Site Work</button>
+    </div>
+
+    <div class="gallery-masonry reveal" id="galleryGrid">
+
+      <!-- Training Sessions -->
+      <div class="gallery-item" data-cat="training" data-caption="Construction Training Session">
+        <img src="gallery-construction-class.jpg" alt="Construction training class" loading="lazy">
+        <div class="gallery-overlay"><span>Construction Training</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="training" data-caption="Electrical Installation Training">
+        <img src="gallery-electrical-training.jpg" alt="Electrical installation training" loading="lazy">
+        <div class="gallery-overlay"><span>Electrical Installation</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="training" data-caption="Painting & Decoration Workshop">
+        <img src="gallery-painting-session.jpg" alt="Painting session in progress" loading="lazy">
+        <div class="gallery-overlay"><span>Painting Workshop</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="training" data-caption="Art & Creativity Session">
+        <img src="gallery-painting-studio.jpg" alt="Student painting artwork" loading="lazy">
+        <div class="gallery-overlay"><span>Art & Creativity</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="training" data-caption="Business Development Training">
+        <img src="gallery-business-training.jpg" alt="Business training presentation" loading="lazy">
+        <div class="gallery-overlay"><span>Business Development</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="training" data-caption="Photography Studio Training">
+        <img src="gallery-photo-studio.jpg" alt="Photography studio" loading="lazy">
+        <div class="gallery-overlay"><span>Photography Studio</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="training" data-caption="Videography & Film Production">
+        <img src="gallery-video-studio.jpg" alt="Video production studio" loading="lazy">
+        <div class="gallery-overlay"><span>Film Production</span></div>
+      </div>
+
+      <!-- Graduation & Certificates -->
+      <div class="gallery-item" data-cat="graduation" data-caption="LSETF Certificate Presentation">
+        <img src="gallery-lsetf-cert.jpg" alt="LSETF certificate presentation" loading="lazy">
+        <div class="gallery-overlay"><span>LSETF Certificate Day</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="graduation" data-caption="Graduates Showcasing Their Artwork">
+        <img src="gallery-painting-graduates.jpg" alt="Graduates with their artworks" loading="lazy">
+        <div class="gallery-overlay"><span>Graduates Showcase</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="graduation" data-caption="Student Artwork — Abstract">
+        <img src="gallery-student-artwork1.jpg" alt="Student holding artwork" loading="lazy">
+        <div class="gallery-overlay"><span>Student Artwork</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="graduation" data-caption="Student Artwork — Nature">
+        <img src="gallery-student-artwork2.jpg" alt="Student with nature artwork" loading="lazy">
+        <div class="gallery-overlay"><span>Creative Expression</span></div>
+      </div>
+
+      <!-- Partnerships & Events -->
+      <div class="gallery-item" data-cat="partnerships" data-caption="Skill4U Panel Event">
+        <img src="gallery-skill4u-panel.jpg" alt="Skill4U panel discussion event" loading="lazy">
+        <div class="gallery-overlay"><span>Skill4U Panel Event</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="partnerships" data-caption="Photography Programme — Graduate">
+        <img src="gallery-photographer.jpg" alt="Photography graduate" loading="lazy">
+        <div class="gallery-overlay"><span>Photography Programme</span></div>
+      </div>
+
+      <!-- Field & Site Work -->
+      <div class="gallery-item" data-cat="fieldwork" data-caption="Tiling & Construction Site Work">
+        <img src="gallery-tiling-fieldwork.jpg" alt="Tiling fieldwork on site" loading="lazy">
+        <div class="gallery-overlay"><span>Tiling Site Work</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="fieldwork" data-caption="HTA Electrical Team — Site">
+        <img src="gallery-electrical-group.jpg" alt="HTA electrical team" loading="lazy">
+        <div class="gallery-overlay"><span>Electrical Team</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="fieldwork" data-caption="Plumbing Training Group">
+        <img src="gallery-plumbing-class.jpg" alt="Plumbing training group" loading="lazy">
+        <div class="gallery-overlay"><span>Plumbing Group</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="fieldwork" data-caption="Carpentry & Joinery in Action">
+        <img src="gallery-carpentry.jpg" alt="Carpentry in action" loading="lazy">
+        <div class="gallery-overlay"><span>Carpentry Session</span></div>
+      </div>
+
+      <div class="gallery-item" data-cat="fieldwork" data-caption="Painting Team — Field Project">
+        <img src="gallery-painting-team.jpg" alt="Painting team on fieldwork" loading="lazy">
+        <div class="gallery-overlay"><span>Field Project</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CAROUSEL – MORE MOMENTS ── -->
+<section class="carousel-section">
+  <div class="carousel-header reveal">
+    <div class="section-tag">More Moments</div>
+    <h2>Behind the Scenes at HTA</h2>
+    <p>More snapshots from our training centres, events and field activities.</p>
+  </div>
+
+  <div class="carousel-viewport">
+    <div class="carousel-track" id="carouselTrack">
+      <div class="carousel-slide" data-caption="Construction Training Session">
+        <img src="gallery-construction-class.jpg" alt="Construction class" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Construction Training</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Electrical Installation Training">
+        <img src="gallery-electrical-training.jpg" alt="Electrical training" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Electrical Training</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Photography Studio">
+        <img src="gallery-photo-studio.jpg" alt="Photo studio" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Photo Studio</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Video Production Studio">
+        <img src="gallery-video-studio.jpg" alt="Video studio" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Film & Video Studio</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Skill4U Panel Event">
+        <img src="gallery-skill4u-panel.jpg" alt="Panel event" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Skill4U Panel</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Painting Workshop">
+        <img src="gallery-painting-session.jpg" alt="Painting" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Painting Workshop</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Graduates with Artwork">
+        <img src="gallery-painting-graduates.jpg" alt="Graduates" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Graduates</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Business Development Training">
+        <img src="gallery-business-training.jpg" alt="Business training" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Business Training</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Carpentry in Action">
+        <img src="gallery-carpentry.jpg" alt="Carpentry" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Carpentry</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="LSETF Certificate Day">
+        <img src="gallery-lsetf-cert.jpg" alt="Certificate" loading="lazy">
+        <div class="carousel-slide-overlay"><span>LSETF Ceremony</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Plumbing Group">
+        <img src="gallery-plumbing-class.jpg" alt="Plumbing group" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Plumbing Group</span></div>
+      </div>
+      <div class="carousel-slide" data-caption="Tiling Fieldwork">
+        <img src="gallery-tiling-fieldwork.jpg" alt="Tiling site" loading="lazy">
+        <div class="carousel-slide-overlay"><span>Tiling Site Work</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="carousel-controls">
+    <button class="carousel-btn" id="carouselPrev" aria-label="Previous">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="carousel-dots" id="carouselDots"></div>
+    <button class="carousel-btn" id="carouselNext" aria-label="Next">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <p class="carousel-hint">Drag to explore · Auto-plays every 4s</p>
+</section>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+    <button class="lightbox-arrow lightbox-prev" id="lightboxPrev">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+    <button class="lightbox-arrow lightbox-next" id="lightboxNext">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="cta-bg"><div class="cta-shape"></div></div>
+  <div class="container cta-content">
+    <div class="cta-text">
+      <h2>See Yourself in These Moments</h2>
+      <p>Start your journey with HTA today and become part of this growing story of transformation.</p>
+    </div>
+    <div class="cta-actions"><a href="courses.html" class="btn btn-white">Start Your Journey</a></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="hta-logo.png" alt="Honeytreat Trade Academy" class="footer-logo-img">
+      </div>
+      <p>Empowering Nigerians with skills that create opportunities, drive prosperity, and build a better future.</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/honeytreatacademy" class="social-link" target="_blank" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/honeytreatacademy" class="social-link" target="_blank" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/channel/UCb0mH7NeYaNTUYL1LRljejA" class="social-link" target="_blank" aria-label="YouTube">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+            <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
+          </svg>
+        </a>
+        <a href="https://x.com/htaacademy01?s=21" class="social-link" target="_blank" aria-label="X (Twitter)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="courses.html">Courses</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="blog.html">Blog</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Courses</h4>
+      <ul>
+        <li><a href="courses.html">Construction Skills</a></li>
+        <li><a href="courses.html">Agripreneur Skills</a></li>
+        <li><a href="courses.html">Digital Skills</a></li>
+        <li><a href="courses.html">Entertainment Skills</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l1.14-1.14a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          +234-807-334-2278
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          contact@honeytreatacademy.com
+        </li>
+        <li style="align-items:flex-start;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px;">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          9A Bankole Street, Isheri, Magodo Phase 1, Lagos State
+        </li>
+      </ul>
+
+        <h4 style="margin-top:1.5rem;">Legal</h4>
+      <ul>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/USER-TERMS-AND-CONDITION-1.pdf">Terms of Use</a></li>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/Honeytreat-Trade-Academy-%E2%80%93-Privacy-Policy-.pdf">Privacy Policy</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="https://www.honeytreatacademy.com/courses/">Student Enrollment</a></li>
+        <li><a href="https://chat.whatsapp.com/IYuxshSL3nLK2MAzeVy0af?mode=gi_t">HTA Community</a></li>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/QUALITY-POLICY-STATEMENT.pdf">QMS Policy Statement</a></li>
+      </ul>
+      <h4 style="margin-top:1.5rem;">Related Entities</h4>
+      <ul>
+        <li><a href="https://honeytreatgrp.com/">Honeytreat Group</a></li>
+        <li><a href="https://honeytreatglobal.com/">Honeytreat Global Services</a></li>
+        <li><a href="https://honeytreatlmtd.com/">Honeytreat Limited</a></li>
+      </ul>
+      
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Honeytreat Trade Academy. All rights reserved.</p>
+      <p>Empowering Skills | Transforming Lives | Building Nigeria</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+/* ═══════════════════════════════════════
+   GALLERY FILTER
+═══════════════════════════════════════ */
+const filterBtns = document.querySelectorAll('.filter-btn');
+const galleryItems = document.querySelectorAll('.gallery-item');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+
+    galleryItems.forEach(item => {
+      if (filter === 'all' || item.dataset.cat === filter) {
+        item.classList.remove('hide');
+        item.style.animation = 'fadeInUp 0.4s ease both';
+      } else {
+        item.classList.add('hide');
+      }
+    });
+  });
+});
+
+/* ═══════════════════════════════════════
+   LIGHTBOX
+═══════════════════════════════════════ */
+const lightbox     = document.getElementById('lightbox');
+const lightboxImg  = document.getElementById('lightboxImg');
+const lightboxCap  = document.getElementById('lightboxCaption');
+const lightboxClose= document.getElementById('lightboxClose');
+const lightboxPrev = document.getElementById('lightboxPrev');
+const lightboxNext = document.getElementById('lightboxNext');
+
+let allItems = [], currentIndex = 0;
+
+function buildItemList() {
+  allItems = Array.from(document.querySelectorAll('.gallery-item:not(.hide)'));
+}
+
+function openLightbox(index) {
+  buildItemList();
+  currentIndex = index;
+  const item = allItems[currentIndex];
+  lightboxImg.src  = item.querySelector('img').src;
+  lightboxCap.textContent = item.dataset.caption || '';
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function shiftLightbox(dir) {
+  currentIndex = (currentIndex + dir + allItems.length) % allItems.length;
+  const item = allItems[currentIndex];
+
+  lightboxImg.style.transform = 'scale(0.92)';
+  setTimeout(() => {
+    lightboxImg.src = item.querySelector('img').src;
+    lightboxCap.textContent = item.dataset.caption || '';
+    lightboxImg.style.transform = 'scale(1)';
+  }, 120);
+}
+
+galleryItems.forEach(item => {
+  item.addEventListener('click', () => {
+    buildItemList();
+    const visibleIndex = allItems.indexOf(item);
+    if (visibleIndex !== -1) openLightbox(visibleIndex);
+  });
+});
+
+lightboxClose?.addEventListener('click', closeLightbox);
+lightbox?.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+lightboxPrev?.addEventListener('click', e => { e.stopPropagation(); shiftLightbox(-1); });
+lightboxNext?.addEventListener('click', e => { e.stopPropagation(); shiftLightbox(1); });
+
+document.addEventListener('keydown', e => {
+  if (!lightbox?.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') shiftLightbox(-1);
+  if (e.key === 'ArrowRight') shiftLightbox(1);
+});
+
+/* ═══════════════════════════════════════
+   CAROUSEL
+═══════════════════════════════════════ */
+const track      = document.getElementById('carouselTrack');
+const prevBtn    = document.getElementById('carouselPrev');
+const nextBtn    = document.getElementById('carouselNext');
+const dotsWrap   = document.getElementById('carouselDots');
+
+if (!track || !prevBtn || !nextBtn || !dotsWrap) {
+  console.error('Carousel elements not found');
+  return;
+}
+
+const slides = track.querySelectorAll('.carousel-slide');
+
+let slideW       = 0;
+let visibleCount = 3;
+let currentSlide = 0;
+let autoTimer    = null;
+let isDragging   = false, startX = 0, startTranslate = 0;
+
+function getVisibleCount() {
+  if (window.innerWidth < 580) return 1;
+  if (window.innerWidth < 900) return 2;
+  return 3;
+}
+
+function getSlideWidth() {
+  const gap = 20; // matches CSS ~1.25rem
+  const vp  = track.parentElement.offsetWidth - 32;
+  const vc  = getVisibleCount();
+  return (vp - gap * (vc - 1)) / vc;
+}
+
+function buildDots() {
+  dotsWrap.innerHTML = '';
+  const pages = Math.ceil(slides.length / visibleCount);
+
+  for (let i = 0; i < pages; i++) {
+    const d = document.createElement('div');
+    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i * visibleCount));
+    dotsWrap.appendChild(d);
+  }
+}
+
+function updateDots() {
+  const dots  = dotsWrap.querySelectorAll('.carousel-dot');
+  const page  = Math.floor(currentSlide / visibleCount);
+  dots.forEach((d, i) => d.classList.toggle('active', i === page));
+}
+
+function goTo(index) {
+  visibleCount = getVisibleCount();
+  slideW       = getSlideWidth();
+
+  const max    = slides.length - visibleCount;
+  currentSlide = Math.max(0, Math.min(index, max));
+
+  const offset = currentSlide * (slideW + 20);
+  track.style.transform = `translateX(-${offset}px)`;
+
+  prevBtn.disabled = currentSlide <= 0;
+  nextBtn.disabled = currentSlide >= max;
+
+  updateDots();
+}
+
+function init() {
+  visibleCount = getVisibleCount();
+  slideW       = getSlideWidth();
+
+  slides.forEach(s => {
+    s.style.flex = `0 0 ${slideW}px`;
+  });
+
+  buildDots();
+  goTo(currentSlide);
+}
+
+prevBtn.addEventListener('click', () => { resetAuto(); goTo(currentSlide - 1); });
+nextBtn.addEventListener('click', () => { resetAuto(); goTo(currentSlide + 1); });
+
+window.addEventListener('resize', init);
+
+/* Auto-play */
+function startAuto() {
+  autoTimer = setInterval(() => {
+    const max = slides.length - visibleCount;
+    goTo(currentSlide >= max ? 0 : currentSlide + 1);
+  }, 4000);
+}
+
+function resetAuto() {
+  clearInterval(autoTimer);
+  startAuto();
+}
+
+/* Drag */
+track.addEventListener('mousedown', e => {
+  isDragging = true;
+  startX = e.clientX;
+  startTranslate = currentSlide * (slideW + 20);
+  track.style.transition = 'none';
+});
+
+track.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = startX - e.clientX;
+  track.style.transform = `translateX(-${startTranslate + dx}px)`;
+});
+
+track.addEventListener('mouseup', e => {
+  if (!isDragging) return;
+  isDragging = false;
+  track.style.transition = '';
+
+  const dx = startX - e.clientX;
+  goTo(dx > 50 ? currentSlide + 1 : dx < -50 ? currentSlide - 1 : currentSlide);
+});
+
+track.addEventListener('mouseleave', () => {
+  if (isDragging) {
+    isDragging = false;
+    track.style.transition = '';
+    goTo(currentSlide);
+  }
+});
+
+/* Touch */
+track.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+  startTranslate = currentSlide * (slideW + 20);
+  track.style.transition = 'none';
+}, { passive: true });
+
+track.addEventListener('touchmove', e => {
+  const dx = startX - e.touches[0].clientX;
+  track.style.transform = `translateX(-${startTranslate + dx}px)`;
+}, { passive: true });
+
+track.addEventListener('touchend', e => {
+  track.style.transition = '';
+  const dx = startX - e.changedTouches[0].clientX;
+  goTo(dx > 50 ? currentSlide + 1 : dx < -50 ? currentSlide - 1 : currentSlide);
+});
+
+/* Slide click (fixed) */
+slides.forEach(slide => {
+  slide.addEventListener('click', (e) => {
+    if (Math.abs(startX - e.clientX) > 5) return;
+
+    const img = slide.querySelector('img');
+    lightboxImg.src = img.src;
+    lightboxCap.textContent = slide.dataset.caption || '';
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+/* INIT */
+init();
+startAuto();
+
+});
+</script>
+</body>
+</html>

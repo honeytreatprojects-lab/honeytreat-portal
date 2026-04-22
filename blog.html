@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog | Honeytreat Trade Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Newsletter Section ── */
+.newsletter-section {
+  background: var(--light-bg);
+  padding: 60px 0;
+  border-top: 1px solid var(--border);
+}
+.newsletter-card {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-main) 55%, var(--purple-dark) 100%);
+  border-radius: 24px;
+  padding: 3rem 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+.newsletter-card::before {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  top: -80px; right: 10%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.newsletter-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  flex: 1;
+  min-width: 260px;
+}
+.newsletter-icon {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.newsletter-icon svg {
+  width: 24px; height: 24px;
+  stroke: white;
+}
+.newsletter-left h3 {
+  font-family: var(--font-display);
+  color: white;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+.newsletter-left p {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0;
+}
+.newsletter-form {
+  flex: 1;
+  min-width: 280px;
+  max-width: 420px;
+}
+.newsletter-input-wrap {
+  display: flex;
+  background: white;
+  border-radius: 100px;
+  overflow: hidden;
+  padding: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.newsletter-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.7rem 1.1rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  outline: none;
+}
+.newsletter-input::placeholder {
+  color: var(--text-muted);
+}
+.newsletter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--green-main);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+.newsletter-btn svg {
+  width: 14px; height: 14px;
+  transition: transform 0.2s ease;
+}
+.newsletter-btn:hover {
+  background: var(--green-dark);
+  transform: scale(1.03);
+}
+.newsletter-btn:hover svg {
+  transform: translateX(3px);
+}
+.newsletter-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.75rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+  padding-left: 0.25rem;
+}
+.newsletter-note svg { flex-shrink: 0; stroke: rgba(255,255,255,0.55); }
+.newsletter-success {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.65rem 1.1rem;
+  border-radius: 100px;
+  margin-top: 0.75rem;
+  animation: fadeInUp 0.4s ease both;
+}
+.newsletter-success svg { stroke: #52b788; flex-shrink: 0; }
+@media (max-width: 768px) {
+  .newsletter-card {
+    flex-direction: column;
+    padding: 2rem 1.75rem;
+    gap: 2rem;
+  }
+  .newsletter-form { max-width: 100%; width: 100%; }
+}
+
+    .blog-img {
+  width: 100%;
+  height: 240px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.blog-img-1 {
+  background-image: url('blog-construction.jpg');
+  background-position: top center; /* shows faces better */
+}
+
+.blog-img-2 {
+  background-image: url('blog-digital.jpg');
+}
+
+.blog-img-3 {
+  background-image: url('blog-agriculture.jpg');
+}
+
+.blog-img-4 {
+  background-image: url('blog-events.jpg');
+  background-position: 50% 20%; /* 👈 shift focus upward */
+}
+.blog-post-card {
+  overflow: hidden;
+}
+
+.blog-post-card:hover .blog-img {
+  transform: scale(1.05);
+  transition: transform 0.5s ease;
+}
+  </style>
+</head>
+<body class="page-blog">
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="hta-logo.png" alt="Honeytreat Trade Academy" class="nav-logo-img" width="70px">
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link">About Us</a></li>
+      <li><a href="courses.html" class="nav-link">Courses</a></li>
+      <li><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+      <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+      <li><a href="blog.html" class="nav-link active">Blog</a></li>
+      <li><a href="connect.html" class="nav-link nav-cta">Connect</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="section-tag">HTA Blog & Events</div>
+    <h1>Insights & Inspiration —<br>Empowering Knowledge</h1>
+    <p>Stay ahead with expert tips, industry trends, and stories that fuel growth and innovation.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="blog-grid">
+      <div class="blog-main reveal">
+
+        <div class="blog-post-card">
+          <div class="blog-img blog-img-1"></div>
+          <div class="blog-post-body">
+            <div class="blog-meta">
+              <span class="blog-cat">Construction</span>
+              <span>March 15, 2025</span>
+              <span>5 min read</span>
+            </div>
+            <h3>5 In-Demand Construction Skills That Can Get You Employed in 2025</h3>
+            <p>The Nigerian construction industry is booming. We break down the top 5 skills employers are looking for right now — and how to get certified fast.</p>
+            <a href="#" class="read-more">Read More →</a>
+          </div>
+        </div>
+
+        <div class="blog-post-card">
+          <div class="blog-img blog-img-2"></div>
+          <div class="blog-post-body">
+            <div class="blog-meta">
+              <span class="blog-cat">Digital Skills</span>
+              <span>February 28, 2025</span>
+              <span>4 min read</span>
+            </div>
+            <h3>How to Launch a Freelance Career in Data Analytics From Nigeria</h3>
+            <p>The global demand for data analysts is growing rapidly. Here's a step-by-step guide to landing your first remote client from Nigeria using skills you can learn at HTA.</p>
+            <a href="#" class="read-more">Read More →</a>
+          </div>
+        </div>
+
+        <div class="blog-post-card">
+          <div class="blog-img blog-img-3"></div>
+          <div class="blog-post-body">
+            <div class="blog-meta">
+              <span class="blog-cat">Agriculture</span>
+              <span>February 10, 2025</span>
+              <span>6 min read</span>
+            </div>
+            <h3>Why Fish Farming is One of Nigeria's Most Profitable Agricultural Ventures</h3>
+            <p>With rising protein demand and limited supply, fish farming presents a massive opportunity for young Nigerians. We explore the numbers, challenges, and how to get started.</p>
+            <a href="#" class="read-more">Read More →</a>
+          </div>
+        </div>
+
+        <div class="blog-post-card">
+          <div class="blog-img blog-img-4"></div>
+          <div class="blog-post-body">
+            <div class="blog-meta">
+              <span class="blog-cat">Events</span>
+              <span>January 20, 2025</span>
+              <span>3 min read</span>
+            </div>
+            <h3>HTA Graduates Over 150 Students in Q4 2024 Certification Ceremony</h3>
+            <p>In our biggest ceremony yet, HTA celebrated 150 graduates across Construction, Digital Skills, and Agriculture tracks. Read about the highlights and what's next for our alumni.</p>
+            <a href="#" class="read-more">Read More →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="blog-sidebar reveal">
+        <div class="sidebar-widget">
+          <h4>Categories</h4>
+          <div class="sidebar-tags">
+            <span class="sidebar-tag">Construction</span>
+            <span class="sidebar-tag">Agriculture</span>
+            <span class="sidebar-tag">Digital Skills</span>
+            <span class="sidebar-tag">Entertainment</span>
+            <span class="sidebar-tag">Career Tips</span>
+            <span class="sidebar-tag">HTA Events</span>
+            <span class="sidebar-tag">Safety</span>
+            <span class="sidebar-tag">Industry News</span>
+          </div>
+        </div>
+
+        <div class="sidebar-widget">
+          <h4>Quick Links</h4>
+          <ul style="display:flex;flex-direction:column;gap:0.6rem;">
+            <li><a href="courses.html" style="color:var(--green-main);font-size:0.88rem;font-weight:600;">→ View All Courses</a></li>
+            <li><a href="testimonials.html" style="color:var(--green-main);font-size:0.88rem;font-weight:600;">→ Student Testimonials</a></li>
+            <li><a href="connect.html" style="color:var(--green-main);font-size:0.88rem;font-weight:600;">→ Enroll Now</a></li>
+            <li><a href="gallery.html" style="color:var(--green-main);font-size:0.88rem;font-weight:600;">→ Photo Gallery</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-widget" style="background:linear-gradient(135deg,var(--green-dark),var(--purple-dark));color:white;">
+          <h4 style="color:white;">Ready to Get Skilled?</h4>
+          <p style="color:rgba(255,255,255,0.75);font-size:0.85rem;margin-bottom:1.25rem;">Enroll in a course today and start your transformation.</p>
+          <a href="courses.html" class="btn btn-white" style="font-size:0.85rem;padding:0.7rem 1.5rem;">Browse Courses</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER SECTION -->
+<section class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-card">
+      <div class="newsletter-left">
+        <div class="newsletter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <h3>Stay in the Loop</h3>
+          <p>Get the latest HTA news, course updates, and skill-building tips delivered straight to your inbox.</p>
+        </div>
+      </div>
+      <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+        <div class="newsletter-input-wrap">
+          <input type="email" placeholder="Enter your email address" required class="newsletter-input">
+          <button type="submit" class="newsletter-btn">
+            Subscribe
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+        <p class="newsletter-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          No spam, ever. Unsubscribe at any time.
+        </p>
+        <div class="newsletter-success" id="newsletterSuccess">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          You're subscribed! Welcome to the HTA community.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="hta-logo.png" alt="Honeytreat Trade Academy" class="footer-logo-img">
+      </div>
+      <p>Empowering Nigerians with skills that create opportunities, drive prosperity, and build a better future.</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/honeytreatacademy" class="social-link" target="_blank" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/honeytreatacademy" class="social-link" target="_blank" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/channel/UCb0mH7NeYaNTUYL1LRljejA" class="social-link" target="_blank" aria-label="YouTube">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+            <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
+          </svg>
+        </a>
+        <a href="https://x.com/htaacademy01?s=21" class="social-link" target="_blank" aria-label="X (Twitter)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="courses.html">Courses</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="blog.html">Blog</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Courses</h4>
+      <ul>
+        <li><a href="courses.html">Construction Skills</a></li>
+        <li><a href="courses.html">Agripreneur Skills</a></li>
+        <li><a href="courses.html">Digital Skills</a></li>
+        <li><a href="courses.html">Entertainment Skills</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l1.14-1.14a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          +234-807-334-2278
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          contact@honeytreatacademy.com
+        </li>
+        <li style="align-items:flex-start;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px;">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          9A Bankole Street, Isheri, Magodo Phase 1, Lagos State
+        </li>
+      </ul>
+
+        <h4 style="margin-top:1.5rem;">Legal</h4>
+      <ul>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/USER-TERMS-AND-CONDITION-1.pdf">Terms of Use</a></li>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/Honeytreat-Trade-Academy-%E2%80%93-Privacy-Policy-.pdf">Privacy Policy</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="https://www.honeytreatacademy.com/courses/">Student Enrollment</a></li>
+        <li><a href="https://chat.whatsapp.com/IYuxshSL3nLK2MAzeVy0af?mode=gi_t">HTA Community</a></li>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/QUALITY-POLICY-STATEMENT.pdf">QMS Policy Statement</a></li>
+      </ul>
+      <h4 style="margin-top:1.5rem;">Related Entities</h4>
+      <ul>
+        <li><a href="https://honeytreatgrp.com/">Honeytreat Group</a></li>
+        <li><a href="https://honeytreatglobal.com/">Honeytreat Global Services</a></li>
+        <li><a href="https://honeytreatlmtd.com/">Honeytreat Limited</a></li>
+      </ul>
+      
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Honeytreat Trade Academy. All rights reserved.</p>
+      <p>Empowering Skills | Transforming Lives | Building Nigeria</p>
+    </div>
+  </div>
+</footer>
+<script src="main.js"></script>
+<script>
+  function handleNewsletterSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const wrap = form.querySelector('.newsletter-input-wrap');
+    const note = form.querySelector('.newsletter-note');
+    const success = document.getElementById('newsletterSuccess');
+    wrap.style.display = 'none';
+    note.style.display = 'none';
+    success.style.display = 'flex';
+    form.reset();
+  }
+</script>
+</body>
+</html>

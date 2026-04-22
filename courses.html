@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Courses | Honeytreat Trade Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Course item icons — SVG version */
+    .course-item-icon {
+      font-size: unset;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--green-pale);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+    .course-item-icon svg {
+      width: 26px; height: 26px;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .course-item-icon.purple-bg { background: var(--purple-pale); }
+    .section-tag-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .section-tag-icon svg {
+      width: 14px; height: 14px;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .why-icon {
+      font-size: unset;
+      width: 48px; height: 48px;
+      border-radius: var(--radius);
+      background: var(--purple-pale);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .why-icon svg {
+      width: 24px; height: 24px;
+      fill: none;
+      stroke: var(--purple-main);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── Dynamic Course Cards Grid ── */
+    .ccc-dynamic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .ccc-dynamic-card {
+      background: white;
+      border: 1.5px solid #e8e4f5;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .ccc-dynamic-card:hover {
+      box-shadow: 0 12px 40px rgba(92,61,158,0.13);
+      transform: translateY(-4px);
+    }
+    .ccc-dynamic-img-wrap {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+    .ccc-dynamic-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center; /* 👈 shifts focus to head area */
+  display: block;
+  transition: transform 0.45s ease;
+}
+    .ccc-dynamic-card:hover .ccc-dynamic-img { transform: scale(1.05); }
+
+    .ccc-dynamic-body {
+      padding: 1.25rem;
+    }
+    .ccc-dynamic-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+    }
+
+    /* Accordion buttons */
+    .ccc-accordion-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--purple-main);
+      color: white;
+      border: none;
+      border-radius: 100px;
+      padding: 0.65rem 1.1rem;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+      transition: background 0.2s ease;
+    }
+    .ccc-accordion-btn:hover { background: var(--purple-dark); }
+    .ccc-accordion-btn.open { background: var(--green-main); }
+    .ccc-accordion-btn.open:hover { background: var(--green-dark); }
+
+    .acc-arrow {
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .ccc-accordion-btn.open .acc-arrow { transform: rotate(180deg); }
+
+    /* Accordion panels */
+    .ccc-accordion-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s ease;
+      padding: 0 0.25rem;
+    }
+    .ccc-accordion-panel.open {
+      max-height: 500px;
+      padding: 0.5rem 0.25rem 0.75rem;
+    }
+
+    .ccc-courses-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .ccc-check-list {
+      list-style: none;
+      padding: 0; margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .ccc-check-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-body);
+      line-height: 1.4;
+    }
+    .ccc-check-icon {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--green-pale);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .ccc-check-icon::after {
+      content: '';
+      width: 5px; height: 8px;
+      border-right: 2px solid var(--green-main);
+      border-bottom: 2px solid var(--green-main);
+      transform: rotate(45deg) translate(-1px,-1px);
+      display: block;
+    }
+
+    .ccc-enroll-btn {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      padding: 0.65rem 1rem;
+      background: var(--green-main);
+      color: white;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .ccc-enroll-btn:hover {
+      background: var(--green-dark);
+      transform: translateY(-2px);
+    }
+
+    /* CTA enroll card */
+    .ccc-enroll-cta-card {
+      background: var(--purple-main);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1.25rem;
+    }
+    .ccc-enroll-avatars {
+      display: flex;
+      align-items: center;
+    }
+    .ccc-av {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      border: 2.5px solid white;
+      margin-left: -10px;
+      background: var(--purple-pale);
+    }
+    .ccc-av:first-child { margin-left: 0; }
+    .ccc-av-count {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      border: 2.5px solid white;
+      margin-left: -10px;
+      flex-shrink: 0;
+    }
+    .ccc-enroll-text {
+      color: rgba(255,255,255,0.9);
+      font-size: 1rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .ccc-enroll-main-btn {
+      display: block;
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      background: white;
+      color: var(--purple-dark);
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .ccc-enroll-main-btn:hover {
+      background: var(--green-pale);
+      transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .ccc-dynamic-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .ccc-dynamic-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="page-courses">
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="hta-logo.png" alt="Honeytreat Trade Academy" class="nav-logo-img" width="70px">
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link">About Us</a></li>
+      <li><a href="courses.html" class="nav-link active">Courses</a></li>
+      <li><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+      <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+      <li><a href="blog.html" class="nav-link">Blog</a></li>
+      <li><a href="connect.html" class="nav-link nav-cta">Connect</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container page-hero-content">
+    <div class="section-tag">Our Courses</div>
+    <h1>Discover a Wide Range of Services<br>Tailored to Equip You</h1>
+    <p>Building skills, transforming lives — explore the stories of growth, innovation, and success captured through our journey.</p>
+  </div>
+</section>
+
+<!-- INDUSTRY TRACKS — 4 cards left untouched for your photos -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Industry Tracks</div>
+      <h2>Choose Your <span class="text-green">Path</span></h2>
+      <p>Four industry-aligned tracks designed to make you job-ready, certification-worthy, and career-confident.</p>
+    </div>
+    <div class="ccc-dynamic-grid">
+
+      <!-- CONSTRUCTION -->
+      <div class="ccc-dynamic-card">
+        <div class="ccc-dynamic-img-wrap">
+          <img src="course-construction.png" alt="Construction Skills" class="ccc-dynamic-img">
+        </div>
+        <div class="ccc-dynamic-body">
+          <h3 class="ccc-dynamic-title">Construction Skills</h3>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>Centres Close to You</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Akilo Centre (Lagos)</li>
+              <li><span class="ccc-check-icon"></span>Abule Egba Centre (Lagos)</li>
+              <li><span class="ccc-check-icon"></span>Osogbo Centre (Osun)</li>
+              <li><span class="ccc-check-icon"></span>Monatan Centre (Ibadan)</li>
+            </ul>
+          </div>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>See Available Courses</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <p class="ccc-courses-label">Courses Available</p>
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Domestic Water Supply</li>
+              <li><span class="ccc-check-icon"></span>Pipe Fitting Installation</li>
+              <li><span class="ccc-check-icon"></span>Electrical Wiring & Installation</li>
+              <li><span class="ccc-check-icon"></span>Welding & Fabrication</li>
+              <li><span class="ccc-check-icon"></span>Carpentry & Furniture Making</li>
+              <li><span class="ccc-check-icon"></span>Masonry & Tiling Work</li>
+              <li><span class="ccc-check-icon"></span>Painting & Decorative</li>
+              <li><span class="ccc-check-icon"></span>Construction Site Management</li>
+            </ul>
+          </div>
+          <a href="connect.html" class="ccc-enroll-btn">Enroll Now</a>
+        </div>
+      </div>
+
+      <!-- AGRICULTURE -->
+      <div class="ccc-dynamic-card">
+        <div class="ccc-dynamic-img-wrap">
+          <img src="course-agriculture.png" alt="Agripreneur Skills" class="ccc-dynamic-img">
+        </div>
+        <div class="ccc-dynamic-body">
+          <h3 class="ccc-dynamic-title">Agripreneur Skills</h3>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>Centres Close to You</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Abule Egba Centre (Lagos)</li>
+              <li><span class="ccc-check-icon"></span>Osogbo Centre (Osun)</li>
+              <li><span class="ccc-check-icon"></span>Monatan Centre (Ibadan)</li>
+            </ul>
+          </div>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>See Available Courses</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <p class="ccc-courses-label">Courses Available</p>
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Fish Farming</li>
+              <li><span class="ccc-check-icon"></span>Snail Farming</li>
+              <li><span class="ccc-check-icon"></span>Agrotech & Digital Agriculture</li>
+              <li><span class="ccc-check-icon"></span>Agricultural Management & Value Chain Optimization</li>
+              <li><span class="ccc-check-icon"></span>Post-Harvest Technology & Value Addition</li>
+            </ul>
+          </div>
+          <a href="connect.html" class="ccc-enroll-btn">Enroll Now</a>
+        </div>
+      </div>
+
+      <!-- DIGITAL -->
+      <div class="ccc-dynamic-card">
+        <div class="ccc-dynamic-img-wrap">
+          <img src="course-digital.png" alt="Digital Skills" class="ccc-dynamic-img">
+        </div>
+        <div class="ccc-dynamic-body">
+          <h3 class="ccc-dynamic-title">Digital Skills</h3>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>Centres Close to You</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Tijani Bello Centre (Lagos)</li>
+              <li><span class="ccc-check-icon"></span>Magodo Centre (Lagos)</li>
+              <li><span class="ccc-check-icon"></span>Abule Egba Centre (Lagos)</li>
+              <li><span class="ccc-check-icon"></span>Osogbo Centre (Osun)</li>
+              <li><span class="ccc-check-icon"></span>Monatan Centre (Ibadan)</li>
+            </ul>
+          </div>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>See Available Courses</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <p class="ccc-courses-label">Courses Available</p>
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Software Engineering</li>
+              <li><span class="ccc-check-icon"></span>Project Management</li>
+              <li><span class="ccc-check-icon"></span>Software Development</li>
+              <li><span class="ccc-check-icon"></span>Data Analytics</li>
+              <li><span class="ccc-check-icon"></span>Digital Marketing</li>
+            </ul>
+          </div>
+          <a href="connect.html" class="ccc-enroll-btn">Enroll Now</a>
+        </div>
+      </div>
+
+      <!-- ENTERTAINMENT -->
+      <div class="ccc-dynamic-card">
+        <div class="ccc-dynamic-img-wrap">
+          <img src="course-entertainment.png" alt="Entertainment Skills" class="ccc-dynamic-img">
+        </div>
+        <div class="ccc-dynamic-body">
+          <h3 class="ccc-dynamic-title">Entertainment Skills</h3>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>Centres Close to You</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Magodo Centre (Lagos)</li>
+            </ul>
+          </div>
+          <button class="ccc-accordion-btn" onclick="toggleAccordion(this)">
+            <span>See Available Courses</span>
+            <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="ccc-accordion-panel">
+            <p class="ccc-courses-label">Courses Available</p>
+            <ul class="ccc-check-list">
+              <li><span class="ccc-check-icon"></span>Music Production</li>
+              <li><span class="ccc-check-icon"></span>Live Sound Engineering</li>
+              <li><span class="ccc-check-icon"></span>Digital Mixing Console</li>
+              <li><span class="ccc-check-icon"></span>Cinematography</li>
+              <li><span class="ccc-check-icon"></span>Video Editing</li>
+            </ul>
+          </div>
+          <a href="connect.html" class="ccc-enroll-btn">Enroll Now</a>
+        </div>
+      </div>
+
+      <!-- ENROLL CTA CARD -->
+      <div class="ccc-enroll-cta-card">
+        <div class="ccc-enroll-avatars">
+          <img src="testi-chukwudi.png" alt="" class="ccc-av">
+          <img src="testi-tunde.png" alt="" class="ccc-av">
+          <img src="testi-emeka.png" alt="" class="ccc-av">
+          <span class="ccc-av-count">3000+</span>
+        </div>
+        <p class="ccc-enroll-text">Unlock your potential and start earning with in-demand skills.</p>
+        <a href="connect.html" class="ccc-enroll-main-btn">Enroll Now</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONSTRUCTION -->
+<section class="section bg-light" id="construction">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">
+        <span class="section-tag-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-dark)" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 20h20M4 20V10l8-6 8 6v10M10 20v-6h4v6"/></svg>
+          Construction Skills
+        </span>
+      </div>
+      <h2>Master the <span class="text-green">Trades</span></h2>
+      <p>BOSCH-certified, hands-on training in the most in-demand construction skills across Nigeria and Africa.</p>
+    </div>
+    <div class="course-list-grid reveal">
+
+      <!-- Carpentry & Joinery: saw/wood icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3h7v4H3zM3 10h7v4H3zM3 17h7v4H3z"/>
+            <path d="M14 5h7M14 12h7M14 19h7"/>
+            <path d="M17 3v18"/>
+          </svg>
+        </div>
+        <h4>Carpentry & Joinery</h4>
+        <p>Learn furniture making, roofing, and structural carpentry with professional tools and guidance.</p>
+        <div class="course-item-meta"><span>8 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Plumbing: pipe/droplet icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        <h4>Plumbing & Pipe Fitting</h4>
+        <p>Master water systems, drainage installation, and pipe fitting for residential and commercial projects.</p>
+        <div class="course-item-meta"><span>6 Weeks</span><span>NBTE Certified</span></div>
+      </div>
+
+      <!-- Electrical Installation: zap/lightning icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(45,106,79,0.1)"/>
+          </svg>
+        </div>
+        <h4>Electrical Installation</h4>
+        <p>Wiring, circuit installation, safety standards and practical electrical work from basics to advanced.</p>
+        <div class="course-item-meta"><span>8 Weeks</span><span>NAFDAC Certified</span></div>
+      </div>
+
+      <!-- Masonry & Bricklaying: layers/blocks icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="14" width="9" height="4" rx="1"/>
+            <rect x="13" y="14" width="9" height="4" rx="1"/>
+            <rect x="6" y="9" width="12" height="4" rx="1"/>
+            <rect x="2" y="4" width="9" height="4" rx="1"/>
+            <rect x="13" y="4" width="9" height="4" rx="1"/>
+          </svg>
+        </div>
+        <h4>Masonry & Bricklaying</h4>
+        <p>Foundation laying, block work, plastering and general masonry techniques for construction sites.</p>
+        <div class="course-item-meta"><span>6 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Tiling & Flooring: grid/tile icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </div>
+        <h4>Tiling & Flooring</h4>
+        <p>Wall and floor tiling, screeding, waterproofing and surface preparation for modern spaces.</p>
+        <div class="course-item-meta"><span>4 Weeks</span><span>BOSCH Certified</span></div>
+      </div>
+
+      <!-- Painting & Decoration: paint brush/palette icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.58a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3z"/>
+            <path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 6-5 6-7"/>
+            <path d="M14.5 17.5 4.5 15"/>
+          </svg>
+        </div>
+        <h4>Painting & Decoration</h4>
+        <p>Surface preparation, interior/exterior painting, decorative finishes and colour theory.</p>
+        <div class="course-item-meta"><span>4 Weeks</span><span>Certified</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- AGRICULTURE -->
+<section class="section" id="agriculture">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag" style="background:var(--green-pale);color:var(--green-dark);">
+        <span class="section-tag-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-dark)" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22V12"/><path d="M5 12c0-4.4 3.1-8 7-8 3.9 0 7 3.6 7 8"/><path d="M12 12c0-4 2-7 5-8"/><path d="M12 12c0-4-2-7-5-8"/></svg>
+          Agripreneur Skills
+        </span>
+      </div>
+      <h2>Farm Smart, <span class="text-green">Earn More</span></h2>
+      <p>Modern agricultural training that combines science, technology and business to make farming profitable.</p>
+    </div>
+    <div class="course-list-grid reveal">
+
+      <!-- Fish Farming: fish icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.5 12c.94-3.46 4.94-6 10.5-6-3 2.5-4 5.5-4 6s1 3.5 4 6c-5.56 0-9.56-2.54-10.5-6z"/>
+            <path d="M18 12h.5"/>
+            <path d="M2 7c1.55 2.55 1.55 4.45 0 7"/>
+            <circle cx="5.5" cy="10.5" r=".5" fill="var(--green-main)" stroke="none"/>
+          </svg>
+        </div>
+        <h4>Fish Farming (Aquaculture)</h4>
+        <p>Pond construction, fish feeding, disease management, and harvest techniques for commercial fish farming.</p>
+        <div class="course-item-meta"><span>8 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Crop Production: wheat/plant icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22V12"/>
+            <path d="M7 9c0-2.21 2.24-4 5-4s5 1.79 5 4"/>
+            <path d="M7 9c2.21 0 4-1.79 4-4"/>
+            <path d="M17 9c-2.21 0-4-1.79-4-4"/>
+            <path d="M7 15c0-2.21 2.24-4 5-4s5 1.79 5 4"/>
+          </svg>
+        </div>
+        <h4>Crop Production</h4>
+        <p>Modern crop cultivation, soil management, fertilization and harvest strategies for maximum yield.</p>
+        <div class="course-item-meta"><span>10 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Poultry Farming: egg/bird icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3c4 0 7 3.13 7 7 0 3.12-2 6-4 8H9c-2-2-4-4.88-4-8 0-3.87 3-7 7-7z"/>
+            <path d="M9 21h6"/>
+            <path d="M12 19v2"/>
+            <path d="M10 10c.5-1 2-1.5 3-1"/>
+          </svg>
+        </div>
+        <h4>Poultry Farming</h4>
+        <p>Broiler and layer management, housing design, feeding programs and disease prevention protocols.</p>
+        <div class="course-item-meta"><span>6 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Agribusiness Management: bar chart icon -->
+      <div class="course-item">
+        <div class="course-item-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--green-main)" xmlns="http://www.w3.org/2000/svg">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+            <line x1="2" y1="20" x2="22" y2="20"/>
+          </svg>
+        </div>
+        <h4>Agribusiness Management</h4>
+        <p>Business planning, marketing, financial management and entrepreneurship for agricultural enterprises.</p>
+        <div class="course-item-meta"><span>6 Weeks</span><span>Certified</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DIGITAL -->
+<section class="section bg-light" id="digital">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag" style="background:var(--purple-pale);color:var(--purple-dark);">
+        <span class="section-tag-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-dark)" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Digital Skills
+        </span>
+      </div>
+      <h2>Enter the <span class="text-purple">Digital Economy</span></h2>
+      <p>Unlock your potential and start earning with in-demand digital skills — no prior experience needed.</p>
+    </div>
+    <div class="course-list-grid reveal">
+
+      <!-- Data Analytics: bar chart icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+            <path d="M22 12A10 10 0 0 0 12 2v10z" fill="rgba(92,61,158,0.12)"/>
+          </svg>
+        </div>
+        <h4>Data Analytics</h4>
+        <p>Excel, Python, Power BI — learn to collect, analyse and visualize data to drive business decisions.</p>
+        <div class="course-item-meta"><span>10 Weeks</span><span>Microsoft Certified</span></div>
+      </div>
+
+      <!-- Web Development: code icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+        </div>
+        <h4>Web Development</h4>
+        <p>HTML, CSS, JavaScript and more — build professional websites and web applications from scratch.</p>
+        <div class="course-item-meta"><span>12 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Digital Marketing: trending up icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            <polyline points="17 6 23 6 23 12"/>
+          </svg>
+        </div>
+        <h4>Digital Marketing</h4>
+        <p>Social media, SEO, content marketing, ads management and brand strategy for businesses.</p>
+        <div class="course-item-meta"><span>8 Weeks</span><span>Google Certified</span></div>
+      </div>
+
+      <!-- Graphic Design: pen tool icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+            <path d="M2 2l7.586 7.586"/>
+            <circle cx="11" cy="11" r="2"/>
+          </svg>
+        </div>
+        <h4>Graphic Design</h4>
+        <p>Canva, Photoshop, CorelDraw — create stunning visuals for brands, products and marketing.</p>
+        <div class="course-item-meta"><span>6 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Virtual Assistance: headphones/support icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+          </svg>
+        </div>
+        <h4>Virtual Assistance</h4>
+        <p>Remote work skills, productivity tools, client management and professional communication.</p>
+        <div class="course-item-meta"><span>4 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Cybersecurity: shield/lock icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <rect x="9" y="11" width="6" height="5" rx="1"/>
+            <path d="M12 11v-2a2 2 0 0 0-4 0"/>
+            <path d="M16 11v-2a4 4 0 0 0-8 0"/>
+          </svg>
+        </div>
+        <h4>Cybersecurity Basics</h4>
+        <p>Introduction to network security, safe online practices and cyber threat protection strategies.</p>
+        <div class="course-item-meta"><span>8 Weeks</span><span>Certified</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ENTERTAINMENT -->
+<section class="section" id="entertainment">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag" style="background:var(--purple-pale);color:var(--purple-dark);">
+        <span class="section-tag-icon">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-dark)" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          Entertainment Skills
+        </span>
+      </div>
+      <h2>Turn Your Passion into a <span class="text-purple">Profession</span></h2>
+      <p>Photography, videography, music production and creative arts — build your career in the entertainment industry.</p>
+    </div>
+    <div class="course-list-grid reveal">
+
+      <!-- Photography: camera icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <h4>Photography</h4>
+        <p>Camera operation, lighting, composition, post-processing and portfolio development.</p>
+        <div class="course-item-meta"><span>6 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Videography: video camera icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+        </div>
+        <h4>Videography & Cinematography</h4>
+        <p>Video production, editing, colour grading and storytelling for commercial and creative projects.</p>
+        <div class="course-item-meta"><span>8 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Music Production: music note / headphones icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
+          </svg>
+        </div>
+        <h4>Music Production</h4>
+        <p>Beat making, mixing, mastering and digital audio workstation (DAW) mastery for the music industry.</p>
+        <div class="course-item-meta"><span>8 Weeks</span><span>Certified</span></div>
+      </div>
+
+      <!-- Event Coverage: calendar/star icon -->
+      <div class="course-item">
+        <div class="course-item-icon purple-bg">
+          <svg viewBox="0 0 24 24" stroke="var(--purple-main)" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+            <path d="M12 14l1.5 3 3.5.5-2.5 2.4.6 3.5L12 22l-3.1 1.4.6-3.5L7 17.5l3.5-.5z"/>
+          </svg>
+        </div>
+        <h4>Event Coverage</h4>
+        <p>Event photography, live streaming, content creation and professional client management.</p>
+        <div class="course-item-meta"><span>4 Weeks</span><span>Certified</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY IT MATTERS -->
+<section class="section bg-light">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Why Choose HTA</div>
+      <h2>Empowering You with Skills <span class="text-green">and Opportunities</span></h2>
+    </div>
+    <div class="why-grid reveal">
+
+      <!-- Assessment & Certification: award/medal icon -->
+      <div class="why-item">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="8" r="6"/>
+            <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+          </svg>
+        </div>
+        <div><h4>Assessment & Certification</h4><p>Internationally recognized certifications that open doors globally and validate your expertise.</p></div>
+      </div>
+
+      <!-- Globally Recognized: globe icon -->
+      <div class="why-item">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div><h4>Globally Recognized Programs</h4><p>Our curriculum aligns with international standards, giving you credentials that matter worldwide.</p></div>
+      </div>
+
+      <!-- Industry Partnerships: handshake icon -->
+      <div class="why-item">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div><h4>Strong Industry Partnerships</h4><p>Connections with BOSCH, LSETF, AOSH and more ensure our training is current and industry-relevant.</p></div>
+      </div>
+
+      <!-- Comprehensive Training: book-open icon -->
+      <div class="why-item">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <div><h4>Comprehensive Training Programs</h4><p>Blended practical and theoretical learning that prepares you for real job environments.</p></div>
+      </div>
+
+      <!-- Health & Safety: shield-check icon -->
+      <div class="why-item">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+        </div>
+        <div><h4>Health & Safety Training</h4><p>Every trade course includes safety protocols to keep you protected on the job.</p></div>
+      </div>
+
+      <!-- Soft Skills: users icon -->
+      <div class="why-item">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div><h4>Soft Skills Development</h4><p>Communication, teamwork and professionalism training woven into every programme.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner">
+  <div class="cta-bg"><div class="cta-shape"></div></div>
+  <div class="container cta-content">
+    <div class="cta-text">
+      <h2>Ready to Enroll?</h2>
+      <p>Take the first step toward a skilled, certified, and fulfilling career. Our team is ready to guide you.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="connect.html" class="btn btn-white">Enroll Now</a>
+      <a href="connect.html" class="btn btn-outline-white">Ask a Question</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="hta-logo.png" alt="Honeytreat Trade Academy" class="footer-logo-img">
+      </div>
+      <p>Empowering Nigerians with skills that create opportunities, drive prosperity, and build a better future.</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/honeytreatacademy" class="social-link" target="_blank" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/honeytreatacademy" class="social-link" target="_blank" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/channel/UCb0mH7NeYaNTUYL1LRljejA" class="social-link" target="_blank" aria-label="YouTube">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+            <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
+          </svg>
+        </a>
+        <a href="https://x.com/htaacademy01?s=21" class="social-link" target="_blank" aria-label="X (Twitter)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="courses.html">Courses</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="blog.html">Blog</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Courses</h4>
+      <ul>
+        <li><a href="courses.html">Construction Skills</a></li>
+        <li><a href="courses.html">Agripreneur Skills</a></li>
+        <li><a href="courses.html">Digital Skills</a></li>
+        <li><a href="courses.html">Entertainment Skills</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l1.14-1.14a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          +234-807-334-2278
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          contact@honeytreatacademy.com
+        </li>
+        <li style="align-items:flex-start;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px;">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          9A Bankole Street, Isheri, Magodo Phase 1, Lagos State
+        </li>
+      </ul>
+
+        <h4 style="margin-top:1.5rem;">Legal</h4>
+      <ul>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/USER-TERMS-AND-CONDITION-1.pdf">Terms of Use</a></li>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/Honeytreat-Trade-Academy-%E2%80%93-Privacy-Policy-.pdf">Privacy Policy</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="https://www.honeytreatacademy.com/courses/">Student Enrollment</a></li>
+        <li><a href="https://chat.whatsapp.com/IYuxshSL3nLK2MAzeVy0af?mode=gi_t">HTA Community</a></li>
+        <li><a href="https://www.honeytreatacademy.com/wp-content/uploads/2026/03/QUALITY-POLICY-STATEMENT.pdf">QMS Policy Statement</a></li>
+      </ul>
+      <h4 style="margin-top:1.5rem;">Related Entities</h4>
+      <ul>
+        <li><a href="https://honeytreatgrp.com/">Honeytreat Group</a></li>
+        <li><a href="https://honeytreatglobal.com/">Honeytreat Global Services</a></li>
+        <li><a href="https://honeytreatlmtd.com/">Honeytreat Limited</a></li>
+      </ul>
+      
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Honeytreat Trade Academy. All rights reserved.</p>
+      <p>Empowering Skills | Transforming Lives | Building Nigeria</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+  function toggleAccordion(btn) {
+    const panel = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // Close all in same card
+    const card = btn.closest('.ccc-dynamic-card');
+    card.querySelectorAll('.ccc-accordion-btn').forEach(b => {
+      b.classList.remove('open');
+      b.nextElementSibling.classList.remove('open');
+    });
+    // Open clicked if it was closed
+    if (!isOpen) {
+      btn.classList.add('open');
+      panel.classList.add('open');
+    }
+  }
+</script>
+</body>
+</html>
